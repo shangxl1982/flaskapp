@@ -26,7 +26,7 @@ class fib(object):
             self.db_engine = None
             self.db_conn = None
         try :
-            self.mc = memcache.Client(CONF['mc_hosts'],debug=0)
+            self.mc = memcache.Client([CONF['mc_hosts']],debug=1)
             if self.mc.get('fib_prefix_maxstep_rst'):
                 return
             elif ( last_calc_rst ):
@@ -36,7 +36,7 @@ class fib(object):
                 self.mc.set('fib_prefix_maxstep_rst', '%s' % json.dumps(tmp))
         except Exception as e:
             # LOG.warn("Can not connect memcache, will not loading fib data")
-            print("Can not connect memcache, will not loading fib data")
+            print("Can not connect memcache, will not loading fib data => %s"%str(e))
             self.mc = None
         return
     @rpc
@@ -45,17 +45,18 @@ class fib(object):
         if self.mc:
             mc_rst = json.loads(self.mc.get('fib_prefix_maxstep_rst'))
             if nstep <= mc_rst['maxsteps']:
+                print("cache hit, do not calculate");
                 msg['result'] = str(mc_rst['rst_array'][0:nstep])
             else:
                 # call the python backend to calculate
                 ret,tmp_a = fib_p(mc_rst['rst_array'][-2], mc_rst['rst_array'][-1], nstep - mc_rst['maxsteps'])
                 if ret == 0:
-                    mc_rst['rst_array'] += tmp_a
+                    mc_rst['rst_array'] = mc_rst['rst_array'][0:len(mc_rst['rst_array'])-2] + tmp_a
                 # memcached will serialize the get/set op, so the only concern is we may invalid
                 # a value set by other caller which may have a better fib arrary. use get and set to
                 # minimize the side effect here. To imp a lock here is not necessary.
-                mc_rst = json.loads(self.mc.get('fib_prefix_maxstep_rst'))
-                if mc_rst['maxsteps'] < nstep:
+                mc_rst_tmp = json.loads(self.mc.get('fib_prefix_maxstep_rst'))
+                if mc_rst_tmp['maxsteps'] < nstep:
                     mc_rst['maxsteps'] = nstep
                     self.mc.set('fib_prefix_maxstep_rst',json.dumps(mc_rst))
                     # update the database either

@@ -11,6 +11,8 @@ Swagger(app)
 @app.route('/fib', methods=['POST'])
 def fibapi():
     """
+    micro service of fib
+    ---
     parameters:
       - name: body
         in: body
@@ -26,11 +28,16 @@ def fibapi():
       400:
         description: user input has an error
     """
-    nstep = request.json.get('nstep')
-    if not str(nstep).isdigit():
+    msg = ret_msg_template
+    if not request.json:
         msg = ret_msg_template
         msg['errcode'] = 400
-        msg['errormsg'] = 'user input has an error'
+        msg['errormsg'] = 'user input is not json data'
+        return json.dumps(msg), msg['errcode']
+    nstep = request.json.get('nstep')
+    if not nstep or not str(nstep).isdigit():
+        msg['errcode'] = 400
+        msg['errormsg'] = 'user input has an error => %s' % str(nstep)
         return json.dumps(msg), msg['errcode']
     try:
         with ClusterRpcProxy({'AMQP_URI': CONF['amqp_host']}) as rpc:
