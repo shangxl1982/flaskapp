@@ -36,6 +36,8 @@ python setup.py install --single-version-externally-managed -O1 --root=$RPM_BUIL
 
 install -m 755 -d $RPM_BUILD_ROOT/usr/bin
 cp -a fib_c/fib_c %{buildroot}%{_bindir}
+cp -a bin/* %{buildroot}%{_bindir}
+chmod 755 %{buildroot}%{_bindir}/*
 
 install -m 755 -d $RPM_BUILD_ROOT/usr/lib/systemd/system/
 cp -a systemd/fib.service $RPM_BUILD_ROOT/usr/lib/systemd/system/

@@ -40,4 +40,5 @@ def fibapi():
         msg['errormsg'] = 'Lost Rpc connection with backend'
     return json.dumps(msg), msg['errcode']
 
-app.run(debug=True)
+if __name__ == '__main__':
+    app.run(debug=True)
