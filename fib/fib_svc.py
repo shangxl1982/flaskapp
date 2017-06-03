@@ -10,7 +10,6 @@ config_f = "/etc/fib/fibsvc.conf"
 
 class fib(object):
     name = "fib"
-    mail = RpcProxy('fib')
 
     def __init__(self):
         self.mc = None
@@ -19,7 +18,8 @@ class fib(object):
         try:
             config = ConfigObj(config_f)
         except Exception as e:
-            LOG.warn("Can not read config file. No mc or db available.")
+            # LOG.warn("Can not read config file. No mc or db available.")
+            print("Can not read config file. No mc or db available.")
             return
         last_calc_rst = None
         try :
@@ -27,7 +27,8 @@ class fib(object):
             self.db_conn = db_engine.connect()
             last_calc_rst = db_conn.execute("select * from fib_rst_table where rec_id == 0")
         except Exception as e:
-            LOG.warn("Can not connect database, will not loading fib data")
+            # LOG.warn("Can not connect database, will not loading fib data")
+            print("Can not connect database, will not loading fib data")
             self.db_engine = None
             self.db_conn = None
         try :
@@ -40,7 +41,8 @@ class fib(object):
                 tmp = {'maxsteps': 2, 'rst_array':[0,1]}
                 self.mc.set('fib_prefix_maxstep_rst', '%s' % json.dumps(tmp))
         except Exception as e:
-            LOG.warn("Can not connect memcache, will not loading fib data")
+            # LOG.warn("Can not connect memcache, will not loading fib data")
+            print("Can not connect memcache, will not loading fib data")
             self.mc = None
         return
     @rpc
