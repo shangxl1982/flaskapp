@@ -1,12 +1,12 @@
-.PHONY all
-fib_c_objs : fib_c.o
+.PHONY: all
+fib_c_objs = fib_c.o
 
 %.o :%.c
-    CC -c -o $@ $<
+	$(CC) -c -o $@ $<
 
 fib_c : $(fib_c_objs)
-    CC -o $@ $^
+	$(CC) -o $@ $^
 
 all: fib_c
 clean:
-    @rm -rf *.o fib_c
+	@rm -rf *.o fib_c

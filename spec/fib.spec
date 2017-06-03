@@ -8,7 +8,7 @@ Version: %{version}
 Release: %{release}
 Source0: %{name}-%{version}.tar.gz
 Group: Services
-BuildArch: noarch
+BuildArch: x86_64
 Vendor: na
 
 License: UNKNOWN
@@ -38,7 +38,7 @@ install -m 755 -d $RPM_BUILD_ROOT/usr/bin
 cp -a fib_c/fib_c %{buildroot}%{_bindir}
 
 install -m 755 -d $RPM_BUILD_ROOT/usr/lib/systemd/system/
-cp -a fib.service $RPM_BUILD_ROOT/usr/lib/systemd/system/
+cp -a systemd/fib.service $RPM_BUILD_ROOT/usr/lib/systemd/system/
 
 %post
 systemctl enable fib
@@ -55,7 +55,7 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(-,root, root)
 %{python_sitelib}/fib
 %{python_sitelib}/fib-*.egg-info
-/usr/bin/*
 /usr/lib/systemd/system/*
+/usr/bin/*
 
 %changelog

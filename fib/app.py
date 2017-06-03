@@ -31,7 +31,7 @@ def fibapi():
         msg = ret_msg_template
         msg['errcode'] = 400
         msg['errormsg'] = 'user input has an error'
-        return json.dumps(msg), msg['errcode'] = 400
+        return json.dumps(msg), msg['errcode']
 
     msg = rpc.fib.fib(nstep)
     return json.dumps(msg), msg['errcode']
