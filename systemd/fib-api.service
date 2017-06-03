@@ -1,0 +1,11 @@
+[Unit]
+Description= fib service
+DefaultDependencies=false
+After=network-pre.target local-fs.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/python /usr/bin/fibapi_loader.py
+
+[Install]
+WantedBy=multi-user.target
