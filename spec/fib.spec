@@ -46,12 +46,16 @@ install -m 755 -d $RPM_BUILD_ROOT/usr/lib/systemd/system/
 cp -a systemd/*.service $RPM_BUILD_ROOT/usr/lib/systemd/system/
 
 %post
-systemctl enable fib
-systemctl restart fib
+systemctl enable fib-api
+systemctl restart fib-api
+systemctl enable fib-svc
+systemctl restart fib-svc
 
 %preun
-systemctl stop fib
-systemctl disable fib
+systemctl stop fib-api
+systemctl disable fib-api
+systemctl stop fib-svc
+systemctl disable fib-svc
 
 %clean
 rm -rf $RPM_BUILD_ROOT
