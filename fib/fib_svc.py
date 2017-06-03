@@ -3,10 +3,8 @@ from sqlalchemy import *
 import memcache
 import json
 from fib.msg_template import ret_msg_template
-from configobj import ConfigObj
 from fib.fib_p import fib_p
-
-config_f = "/etc/fib/fibsvc.conf"
+from fib.conf import CONF
 
 class fib(object):
     name = "fib"
@@ -15,24 +13,20 @@ class fib(object):
         self.mc = None
         self.db_engine = None
         self.db_conn = None
-        try:
-            config = ConfigObj(config_f)
-        except Exception as e:
-            # LOG.warn("Can not read config file. No mc or db available.")
-            print("Can not read config file. No mc or db available.")
+        if not CONF:
             return
         last_calc_rst = None
         try :
-            self.db_engine = create_engine(config['db_host'], echo, module)
-            self.db_conn = db_engine.connect()
-            last_calc_rst = db_conn.execute("select * from fib_rst_table where rec_id == 0")
+            self.db_engine = create_engine(CONF['db_host'], echo = True)
+            self.db_conn = self.db_engine.connect()
+            last_calc_rst = self.db_conn.execute("select * from fib_rst_table where rec_id == 0")
         except Exception as e:
             # LOG.warn("Can not connect database, will not loading fib data")
             print("Can not connect database, will not loading fib data")
             self.db_engine = None
             self.db_conn = None
         try :
-            self.mc = memcache.Client(config['mc_hosts'],debug=0)
+            self.mc = memcache.Client(CONF['mc_hosts'],debug=0)
             if self.mc.get('fib_prefix_maxstep_rst'):
                 return
             elif ( last_calc_rst ):

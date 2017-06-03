@@ -1,12 +1,12 @@
 from flask import Flask, request
 from flasgger import Swagger
 from nameko.standalone.rpc import ClusterRpcProxy
+from fib.conf import CONF
+from fib.msg_template import ret_msg_template
+import json
 
 app = Flask(__name__)
 Swagger(app)
-CONFIG = {'AMQP_URI': "amqp://guest:guest@localhost"}
-
-ret_msg_template = {'result':None, 'errcode':200, 'errormsg':"" }
 
 @app.route('/fib', methods=['POST'])
 def fibapi():
@@ -32,8 +32,12 @@ def fibapi():
         msg['errcode'] = 400
         msg['errormsg'] = 'user input has an error'
         return json.dumps(msg), msg['errcode']
-
-    msg = rpc.fib.fib(nstep)
+    try:
+        with ClusterRpcProxy({'AMQP_URI': CONF['amqp_host']}) as rpc:
+            msg = rpc.fib.fib(nstep)
+    except Exception as e:
+        msg['errcode'] = 500
+        msg['errormsg'] = 'Lost Rpc connection with backend'
     return json.dumps(msg), msg['errcode']
 
 app.run(debug=True)
