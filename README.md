@@ -34,9 +34,13 @@
 
 ## Test suite:
 
-    $python
+    $ python
     >>> from fib import test”
     >>> unittest.main()”
+    
+or
+
+    $ python /usr/lib/python2.7/site-packages/fib/test.py
 
 ## Configurations:
 
