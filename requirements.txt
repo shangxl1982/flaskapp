@@ -1,0 +1,5 @@
+SQLAlchemy>=0.9.0
+flask>=0.1.0
+flasgger
+nameko
+memcache

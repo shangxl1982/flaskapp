@@ -1,0 +1,11 @@
+[Unit]
+Description= fib service
+DefaultDependencies=false
+After=network-pre.target local-fs.target
+
+[Service]
+Type=simple
+ExecStart=/bin/test 1==1
+
+[Install]
+WantedBy=multi-user.target
