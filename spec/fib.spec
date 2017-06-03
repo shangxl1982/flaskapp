@@ -39,8 +39,11 @@ cp -a fib_c/fib_c %{buildroot}%{_bindir}
 cp -a bin/* %{buildroot}%{_bindir}
 chmod 755 %{buildroot}%{_bindir}/*
 
+install -m 755 -d $RPM_BUILD_ROOT/etc/fib/
+cp -a fibsvc.conf $RPM_BUILD_ROOT/etc/fib/
+
 install -m 755 -d $RPM_BUILD_ROOT/usr/lib/systemd/system/
-cp -a systemd/fib.service $RPM_BUILD_ROOT/usr/lib/systemd/system/
+cp -a systemd/*.service $RPM_BUILD_ROOT/usr/lib/systemd/system/
 
 %post
 systemctl enable fib
@@ -59,5 +62,6 @@ rm -rf $RPM_BUILD_ROOT
 %{python_sitelib}/fib-*.egg-info
 /usr/lib/systemd/system/*
 /usr/bin/*
+/etc/fib/*
 
 %changelog

@@ -2,4 +2,4 @@
 from fib import app
 from fib.conf import CONF
 
-app.app.run(debug=True, port=CONF['listen_port'])
+app.app.run(debug=True, port=int(CONF['listen_port']))
